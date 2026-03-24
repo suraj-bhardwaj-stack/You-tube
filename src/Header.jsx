@@ -3,11 +3,17 @@ import youTubeLoog from './assets/you-tube-logo.png';
 import searchIcon from './assets/search-icon.png'
 import notificationIcon from './assets/notification-icon.png'
 import userIcon from './assets/user.png'
+import { useDispatch } from 'react-redux';
+import { appSidebarToggle } from './utils/appSlice';
 function Header() {
+    const dispatch = useDispatch()
+    const hendleSidebar = ()=>{
+        dispatch(appSidebarToggle())
+    }
   return (
     <div className="header-wrapper flex items-center justify-between py-3 px-4 shadow">
         <div className="header-menu w-44 flex items-center gap-4">
-            <img src={menuIcon} alt="menuIcon" className='cursor-pointer' />
+            <img src={menuIcon} alt="menuIcon" className='cursor-pointer' onClick={hendleSidebar} />
 
         <div className="app-log cursor-pointer">
             <img className='object-contain w-24' src={youTubeLoog} alt="You Tube Logo" />
