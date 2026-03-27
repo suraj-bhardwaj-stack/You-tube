@@ -7,7 +7,7 @@ const WatchPage = () =>{
     const dispatch = useDispatch()
     const [searchParam] = useSearchParams()
     const param = searchParam.get('v')
-    console.log(param);
+   
 
     useEffect(()=>{
         dispatch(closeSideBar())

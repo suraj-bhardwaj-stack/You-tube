@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const Sidebar = () =>{
     const useSideBar = useSelector(store => store.app.isSideBar)
-    console.log(useSideBar);
+   
     
     return(
 

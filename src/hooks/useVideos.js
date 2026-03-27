@@ -13,7 +13,7 @@ const useVideos = () =>{
                 
                 dispatch(callTopVideos(json.items))
             }catch(err){
-                console.log(err);
+              
                 
             }
         }

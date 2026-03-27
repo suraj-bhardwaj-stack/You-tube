@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import useVideos from "./hooks/useVideos"
-import VideoCard from "./VideoCard"
+import VideoCard, { AdvideoCard } from "./VideoCard"
 import { Link } from "react-router-dom"
 const VideoContainer = () => {
    useVideos()
@@ -9,11 +9,10 @@ const VideoContainer = () => {
     return <h1>Loading...</h1>;
     }
 
-    console.log(useVidoeData ,"kkk");
     
    
-   const { id, snippet , statistics} = useVidoeData
-  console.log(id);
+//    const { id, snippet , statistics} = useVidoeData
+ 
   
    
    
@@ -21,8 +20,11 @@ const VideoContainer = () => {
 
     return(
         <div className="video-container-wrapper mx-2 my-4 flex gap-0 flex-wrap justify-between">
+            <div className="basis-[20%]">
+                {useVidoeData && <AdvideoCard info={useVidoeData[0]}/>}
+            </div>
             {
-                useVidoeData.map((videos) => <Link className="basis-[20%]" to={"/watch?v="+videos.id}><VideoCard id={videos.id} snippet={videos.snippet} statistics={videos.statistics}/></Link>)
+                useVidoeData.slice(1).map((videos) => <Link className="basis-[20%]"  key={videos.id} to={"/watch?v="+videos.id}><VideoCard  info={videos}/></Link>)
             }
         </div>
     )
