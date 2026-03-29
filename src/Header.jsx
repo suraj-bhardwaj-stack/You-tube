@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { cacheResult } from './utils/searchSlice';
 function Header() {
     const showCache = useSelector(store => store.search.searchSuggestion)
-    console.log(showCache);
+
     
     const [searchQuery , setSearchQuery] = useState("")
     const [Suggestion , setSuggestion] = useState([])
@@ -51,14 +51,9 @@ function Header() {
         dispatch(cacheResult({[searchQuery]: json[1]}))
     }
 
-    console.log(Suggestion);
+   
 
-    if(showCache[searchQuery]){
-        console.log(true);
-    }else{
-        console.log(false);
-        
-    }
+   
     
 
     
