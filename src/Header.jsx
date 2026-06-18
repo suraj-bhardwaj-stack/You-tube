@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { appSidebarToggle } from './utils/appSlice';
 import { useEffect, useState } from 'react';
 import { cacheResult } from './utils/searchSlice';
+import { useNavigate } from 'react-router-dom';
 function Header() {
     const showCache = useSelector(store => store.search.searchSuggestion)
 
@@ -15,40 +16,48 @@ function Header() {
     const [Suggestion , setSuggestion] = useState([])
     const [ShowSuggestion , setShowSuggestion] = useState(false)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     useEffect(()=>{
         if(!searchQuery) return
-        
+
+        const callSuggestionApi = async()=>{
+            const data = await fetch("http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q="+searchQuery);
+            const json = await data.json();
+            setSuggestion(json)
+            dispatch(cacheResult({[searchQuery]: json[1]}))
+        }
+
         const timer = setTimeout(()=>{
             if(showCache[searchQuery]){
                 setSuggestion(["", showCache[searchQuery]])
             }else{
-
                 callSuggestionApi(searchQuery)
             }
-            
+
         }, 200)
 
         return () =>{
             clearTimeout(timer)
         }
-    },[searchQuery])
+    },[searchQuery, showCache, dispatch])
     const hendleSidebar = ()=>{
         dispatch(appSidebarToggle())
     }
     const hendleSearch = (e) =>{
         e.preventDefault()
-        callSuggestionApi(searchQuery)
+        if(!searchQuery) return
+        setShowSuggestion(false)
+        navigate("/results?search_query="+encodeURIComponent(searchQuery))
     }
     const hendleInputSearch = async (e) =>{
         setSearchQuery(e.target.value)
-        
+
     }
 
-    const callSuggestionApi = async(searchQuery)=>{
-          const data = await fetch("http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q="+searchQuery);
-        const json = await data.json();
-        setSuggestion(json)
-        dispatch(cacheResult({[searchQuery]: json[1]}))
+    const selectHandle = (result) =>{
+        setSearchQuery(result)
+        setShowSuggestion(false)
+        navigate("/results?search_query="+encodeURIComponent(result))
     }
 
    
@@ -69,7 +78,7 @@ function Header() {
         
         <div className="search-box w-1/3 relative">
             <form className='flex items-center' onSubmit={hendleSearch}>
-                <input className='border w-full py-1 px-4 rounded-l-full' type="text"  placeholder='Search' onChange={hendleInputSearch}
+                <input className='border w-full py-1 px-4 rounded-l-full' type="text"  placeholder='Search' value={searchQuery} onChange={hendleInputSearch}
                     onBlur={()=>setShowSuggestion(false)}
                     onFocus={()=>setShowSuggestion(true)}
                 />
@@ -78,7 +87,7 @@ function Header() {
            {ShowSuggestion  && Suggestion[1]?.length >0 &&  <div className='search-suggestion absolute w-[90%] bg-white top-[2.4rem] border-gray-400 border rounded-md'>
                 <ul className='m-2'>
                     {
-                      Suggestion &&  Suggestion[1].map((result) => <li className='py-1 px-3 rounded-md font-medium text-[14px] pl-2 flex items-center gap-[10px]  hover:bg-gray-200'><img className='w-4 object-contain' src={searchIcon} alt="searchIcon" />{result}</li>)
+                      Suggestion &&  Suggestion[1].map((result) => <li key={result} onMouseDown={() => selectHandle(result)} className='py-1 px-3 rounded-md font-medium text-[14px] pl-2 flex items-center gap-[10px] cursor-pointer hover:bg-gray-200'><img className='w-4 object-contain' src={searchIcon} alt="searchIcon" />{result}</li>)
                     }
                 </ul>
             </div>
